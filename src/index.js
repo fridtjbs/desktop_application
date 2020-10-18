@@ -16,6 +16,7 @@ fs.readFile('src/data.json', (error, data) => {
     studentList.appendChild(li);
   }
 });
+
 knapp.onclick = (event) => {
   students.push({
     name: inputN.value,
