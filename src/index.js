@@ -4,20 +4,43 @@ let inputN = document.getElementById('inputNavn');
 let inputE = document.getElementById('inputEmail');
 let studentList = document.getElementById('studentList');
 let students = [];
-let knapp = document.getElementById('Knapp');
+let knapp1 = document.getElementById('Knapp');
+console.log(studentList);
+
+function updateStudentList() {
+  studentList.innerHTML = '';
+  for (let student of students) {
+    let li = document.createElement('li');
+    li.innerText = student.name + ', ' + student.email;
+
+    let button = document.createElement('button');
+    button.innerText = 'x';
+    button.onclick = () => {
+      console.log(student);
+      let x = students.indexOf(student);
+      students.splice(x, 1);
+      updateStudentList();
+      console.log(x);
+      var string = JSON.stringify(students);
+      console.log(string);
+      fs.writeFile('src/data.json', string, (error) => {
+        if (error) return console.log(err);
+      });
+    };
+
+    li.appendChild(button);
+    studentList.appendChild(li);
+  }
+}
 
 fs.readFile('src/data.json', (error, data) => {
   students = JSON.parse(data);
   console.log(students);
   if (error) return console.log(err);
-  for (let student of students) {
-    let li = document.createElement('li');
-    li.innerHTML = '<button id="">Slett</button>' + ' ' + student.name + ', ' + student.email;
-    studentList.appendChild(li);
-  }
+  updateStudentList();
 });
 
-knapp.onclick = (event) => {
+knapp1.onclick = (event) => {
   students.push({
     name: inputN.value,
     email: inputE.value,
@@ -29,9 +52,8 @@ knapp.onclick = (event) => {
     if (error) return console.log(err);
   });
 
-  let li = document.createElement('li');
-  li.innerHTML = '<button id="">Slett</button>' + ' ' + inputN.value + ', ' + inputE.value;
-  studentList.appendChild(li);
   document.getElementById('inputNavn').value = '';
   document.getElementById('inputEmail').value = '';
+
+  updateStudentList();
 };
